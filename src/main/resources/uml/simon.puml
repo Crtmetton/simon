@@ -1,0 +1,87 @@
+@startuml
+
+package fr.esgi.business {
+  class Joueur {
+    - name: String
+    - score: int
+    + enterName(name: String): void
+    + updateScore(newScore: int): void
+  }
+
+  class SimonGame {
+    - score: int
+    - sequence: List<String>
+    - currentPlayer: Player
+    - maxLevel: int = 16
+    + startGame(): void
+    + playTurn(): void
+    + checkSequence(input: List<String>): boolean
+    + endGame(): void
+  }
+}
+
+package fr.esgi.services {
+  interface simonService {
+    + startGame(): void
+    + endGame(): void
+  }
+
+  class GameServiceImpl implements GameService {
+    - game: SimonGame
+    + startGame(): void
+    + endGame(): void
+    + saveScore(player: Player): void
+  }
+
+  interface PlayerService {
+    + createPlayer(name: String): Player
+    + updateScore(player: Player, score: int): void
+  }
+
+  class PlayerServiceImpl implements PlayerService {
+    + createPlayer(name: String): Player
+    + updateScore(player: Player, score: int): void
+  }
+}
+
+package fr.esgi {
+  class GameController {
+    - gameService: GameService
+    + startGame(): void
+    + handlePlayerInput(input: List<String>): boolean
+    + endGame(): void
+  }
+
+  class PlayerController {
+    - playerService: PlayerService
+    + createPlayer(name: String): Player
+    + updatePlayerScore(name: String, score: int): void
+  }
+}
+
+package fr.esgi.util {
+  class SoundManager {
+    - soundFiles: Map<String, String>
+    + playSound(color: String): void
+    + changeSoundSetting(soundType: String): void
+  }
+}
+
+package fr.esgi.fxml {
+  class WindowAccueil {}
+  class WindowChoice {}
+  class WindowConf {}
+  class WindowCredits {}
+  class WindowGame {}
+  class WindowInput {}
+  class WindowScore {}
+}
+
+SimonGame --> Player : current player
+GameServiceImpl --> SimonGame : manages
+PlayerServiceImpl --> Player : manages
+GameController --> GameService : uses
+PlayerController --> PlayerService : uses
+SoundManager --> SimonGame : used by
+
+@enduml
