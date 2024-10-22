@@ -1,7 +1,7 @@
 @startuml
 
 package fr.esgi.business {
-  class Player {
+  class Joueur {
     - name: String
     - score: int
     + enterName(name: String): void
@@ -20,8 +20,8 @@ package fr.esgi.business {
   }
 }
 
-package fr.esgi.service {
-  interface GameService {
+package fr.esgi.services {
+  interface simonService {
     + startGame(): void
     + endGame(): void
   }
@@ -44,7 +44,7 @@ package fr.esgi.service {
   }
 }
 
-package fr.esgi.controller {
+package fr.esgi {
   class GameController {
     - gameService: GameService
     + startGame(): void
