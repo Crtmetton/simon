@@ -1,5 +1,6 @@
-package fr.esgi.services;
+package fr.esgi.impl;
 
+import fr.esgi.services.GameService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

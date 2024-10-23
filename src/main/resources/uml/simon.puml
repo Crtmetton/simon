@@ -1,13 +1,16 @@
 @startuml
 
+' Package contenant la logique principale du jeu et des joueurs
 package fr.esgi.business {
-  class Joueur {
+  ' Classe qui gère les informations du joueur
+  class Player {
     - name: String
     - score: int
     + enterName(name: String): void
     + updateScore(newScore: int): void
   }
 
+  ' Classe qui gère le jeu Simon, incluant les scores et la séquence de jeu
   class SimonGame {
     - score: int
     - sequence: List<String>
@@ -20,12 +23,15 @@ package fr.esgi.business {
   }
 }
 
-package fr.esgi.services {
-  interface simonService {
+' Package contenant les services pour la gestion du jeu et des joueurs
+package fr.esgi.service {
+  ' Interface définissant les services pour gérer le jeu
+  interface GameService {
     + startGame(): void
     + endGame(): void
   }
 
+  ' Implémentation du service de gestion du jeu
   class GameServiceImpl implements GameService {
     - game: SimonGame
     + startGame(): void
@@ -33,18 +39,22 @@ package fr.esgi.services {
     + saveScore(player: Player): void
   }
 
+  ' Interface définissant les services pour gérer les joueurs
   interface PlayerService {
     + createPlayer(name: String): Player
     + updateScore(player: Player, score: int): void
   }
 
+  ' Implémentation du service de gestion des joueurs
   class PlayerServiceImpl implements PlayerService {
     + createPlayer(name: String): Player
     + updateScore(player: Player, score: int): void
   }
 }
 
-package fr.esgi {
+' Package contenant les contrôleurs pour orchestrer les interactions entre la vue et les services
+package fr.esgi.controller {
+  ' Contrôleur pour gérer les interactions avec le jeu
   class GameController {
     - gameService: GameService
     + startGame(): void
@@ -52,6 +62,7 @@ package fr.esgi {
     + endGame(): void
   }
 
+  ' Contrôleur pour gérer les interactions avec les joueurs
   class PlayerController {
     - playerService: PlayerService
     + createPlayer(name: String): Player
@@ -59,7 +70,9 @@ package fr.esgi {
   }
 }
 
+' Package contenant les utilitaires pour la gestion des sons
 package fr.esgi.util {
+  ' Classe qui gère les sons utilisés dans le jeu
   class SoundManager {
     - soundFiles: Map<String, String>
     + playSound(color: String): void
@@ -67,6 +80,7 @@ package fr.esgi.util {
   }
 }
 
+' Package contenant les fichiers FXML pour les différentes fenêtres de l'interface utilisateur
 package fr.esgi.fxml {
   class WindowAccueil {}
   class WindowChoice {}
@@ -77,6 +91,7 @@ package fr.esgi.fxml {
   class WindowScore {}
 }
 
+' Relations entre les classes
 SimonGame --> Player : current player
 GameServiceImpl --> SimonGame : manages
 PlayerServiceImpl --> Player : manages

@@ -6,7 +6,7 @@ import lombok.*;
 @RequiredArgsConstructor
 @NoArgsConstructor
 @Data
-public class Joueur {
+public class Player {
         private long id;
         @NonNull
         private String nom;
