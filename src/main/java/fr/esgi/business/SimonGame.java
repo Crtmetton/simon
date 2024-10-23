@@ -14,7 +14,7 @@ import java.util.List;
 public class SimonGame {
     private int score;
     private List<Integer> sequence;
-    private String currentPlayer;
+    private Joueur currentPlayer;
     private int maxLevel;
     private int currentLevel;
 }

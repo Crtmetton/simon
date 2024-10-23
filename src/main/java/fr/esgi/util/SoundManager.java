@@ -15,11 +15,8 @@ public class SoundManager {
    private void playSound(String Color) {
        switch (Color) {
            case "red":
-             //Sound Red
            case "green":
-
            case "blue":
-
            case "yellow":
        }
    }
