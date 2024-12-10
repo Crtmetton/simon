@@ -7,8 +7,8 @@ import lombok.*;
  * */
 
 @AllArgsConstructor
-@NoArgsConstructor
 @RequiredArgsConstructor
+@NoArgsConstructor
 @Data
 public class Joueur {
         private long id;
