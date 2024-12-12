@@ -1,73 +1,93 @@
 package fr.esgi.business;
 
-import lombok.*;
-
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * Ceci est la déclaration de la Classe Difficulty avec les propriétés qui permettent
- * de stocker et paramétrer les difficultés qui seront proposées aux joueurs.
+ * Enumération représentant les niveaux de difficulté dans le jeu Simon.
+ * Chaque niveau de difficulté est associé à un identifiant unique (code) et une description.
  */
-@AllArgsConstructor
-@NoArgsConstructor
-@RequiredArgsConstructor
-@Data
-public class Difficulty {
-    /**
-     * Propriétés de la difficulté.
-     */
-    private String name;
-    private String description;
-    private String type;
-    @NonNull
-    private int code;
+public enum Difficulty {
 
-    /**
-     * Propriétés spécifiques à la partie.
-     */
-    private int speed;  // Vitesse de la difficulté.
-    private int point;  // Points attribués dans cette difficulté.
+    EASY(1,100,60000,"Facile",10),
+    MEDIUM(2,200,45000, "Moyen",20),
+    HARD(3,300,30000,"Difficile",30);
 
+    private final int code;         // Identifiant unique de chaque difficulté
+    private final String description; // Description lisible de la difficulté
+    private final int speed;
+    private final int time ;
+    private final int point ;
     /**
-     * Initialise une liste contenant trois niveaux de difficulté prédéfinis.
+     * Constructeur de l'énumération Difficulty.
      *
-     * @return Une liste contenant les trois niveaux de difficulté.
+     * @param code L'identifiant unique pour le niveau de difficulté.
+     * @param description La description du niveau de difficulté.
      */
-    //$TASK$ Basic Diff
-    public static List<Difficulty> initBasicThreeDifficulty() {
-        List<Difficulty> difficulties = new ArrayList<>();
+    Difficulty(int code, int speed, int time,
+               String description, int point) {
+        this.code = code;
+        this.description = description;
+        this.speed = speed;
+        this.time = time;
+        this.point = point;
+    }
 
-        /* Difficulté facile */
-        difficulties.add(new Difficulty(
-                "Facile",
-                "Une difficulté adaptée pour les débutants.",
-                "Easy",
-                1,
-                5,
-                10
-        ));
+    /**
+     * Méthode permettant de récupérer un niveau de difficulté à partir de son identifiant.
+     *
+     * @param code Le code correspondant au niveau de difficulté recherché.
+     * @return Une instance de Difficulty correspondant au code donné.
+     * @throws IllegalArgumentException Si aucun niveau de difficulté ne correspond au code donné.
+     */
+    public static Difficulty getByCode(int code) {
+        for (Difficulty difficulty : Difficulty.values()) { // Parcours des valeurs de l'énum
+            if (difficulty.code == code) {
+                return difficulty;
+            }
+        }
+        throw new IllegalArgumentException("Code de difficulté invalide : " + code);
+    }
 
-        /* Difficulté moyenne */
-        difficulties.add(new Difficulty(
-                "Moyenne",
-                "Une difficulté intermédiaire pour les joueurs expérimentés.",
-                "Medium",
-                2,
-                10,
-                20
-        ));
+    /**
+     * Retourne le code (id) associé à ce niveau de difficulté.
+     *
+     * @return Le code de la difficulté.
+     */
+    public int getCode() {
+        return code;
+    }
 
-        /* Difficulté difficile */
-        difficulties.add(new Difficulty(
-                "Difficile",
-                "Une difficulté élevée pour les experts.",
-                "Hard",
-                3,
-                15,
-                30
-        ));
+    /**
+     * Retourne la description lisible associée à ce niveau de difficulté.
+     *
+     * @return La description de la difficulté.
+     */
+    public String getDescription() {
+        return description;
+    }
 
-        return difficulties;
+    /**
+     * Retourne la vitesse lisible associée à ce niveau de difficulté.
+     *
+     * @return La vitesse de la difficulté.
+     */
+    public int getSpeed() {
+        return speed;
+    }
+
+    /**
+     * Retourne le temps alloué pour faire la sequence en temps max lisible associée à ce niveau de difficulté.
+     *
+     * @return Le temps de la difficulté.
+     */
+    public int getTime() {
+        return time;
+    }
+
+    /**
+     * Retourne les points données lisible associée à ce niveau de difficulté.
+     *
+     * @return Les points de la difficulté.
+     */
+    public int getPoint() {
+        return point;
     }
 }
