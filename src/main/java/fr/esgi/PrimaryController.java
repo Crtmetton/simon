@@ -109,6 +109,8 @@ public class PrimaryController {
             Stage currentStage = (Stage) validateButton.getScene().getWindow();
             currentStage.setScene(gameScene);
             currentStage.show();
+
+            simonGame.startGame(); // Démarrer le jeu
         } catch (IOException e) {
             e.printStackTrace();
         }
