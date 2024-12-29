@@ -1,25 +1,39 @@
 package fr.esgi.services;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import fr.esgi.business.SimonGame;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
+import java.util.List;
+
 public class GameServiceImpl implements GameService {
+    private final SimonGame simonGame;
 
-    private GameService gameService;
-
-    public void startGame(){
-
+    public GameServiceImpl() {
+        this.simonGame = new SimonGame();
     }
 
-    public void endGame(){
-
+    @Override
+    public void startNewGame() {
+        simonGame.resetGame();
+        addNextColor();
     }
 
-    private void saveScore(){
+    @Override
+    public void addNextColor() {
+        simonGame.addRandomColor();
+    }
 
+    @Override
+    public boolean validateUserInput(String color) {
+        return simonGame.validateColor(color);
+    }
+
+    @Override
+    public List<String> getSequence() {
+        return simonGame.getSequence();
+    }
+
+    @Override
+    public int getScore() {
+        return simonGame.getScore();
     }
 }
