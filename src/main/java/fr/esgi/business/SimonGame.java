@@ -1,5 +1,7 @@
 package fr.esgi.business;
 
+import fr.esgi.util.SoundManager;
+import javafx.fxml.FXML;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,10 +21,10 @@ import java.util.Random;
 public class SimonGame {
 
     private int score;
+    private int sequenceIndexPlayer;
     private List<String> sequence = new ArrayList<>(); // Sequence of colors (e.g., "Red", "Blue")
     private Joueur currentPlayer;
     private int maxLevel;
-    private int currentLevel = 0;
     private Difficulty difficulty;
     private List<Joueur> joueurs = Collections.synchronizedList(new ArrayList<>()); // Thread-safe list
     private boolean multiplayer; // Boolean to track multiplayer mode
@@ -35,13 +37,17 @@ public class SimonGame {
     public void startGame() {
         sequence.clear();
         score = 0;
-        currentLevel = 0;
         maxLevel = 0;
+        sequenceIndexPlayer = 0;
 
         if (multiplayer) {
-            joueurs.forEach(joueur -> joueur.setScore(0));
+            joueurs.forEach(joueur -> {
+                joueur.setScore(0);
+                joueur.setCurrentLevel(0);
+            });
         } else if (currentPlayer != null) {
             currentPlayer.setScore(0);
+            currentPlayer.setCurrentLevel(0);
         }
         addRandomColor();
     }
@@ -50,9 +56,16 @@ public class SimonGame {
      * Adds a random color to the sequence to increase the game's difficulty.
      */
     public void addRandomColor() {
-        String[] colors = {"Red", "Blue", "Green", "Yellow"};
+        SoundManager soundManager = new SoundManager();
+        String[] colors = {"red", "blue", "green", "yellow"};
         sequence.add(colors[random.nextInt(colors.length)]);
-        currentLevel++;
+        System.out.println(sequence.toString());
+        if (sequence.size() == 10) {
+            return;
+        }
+        for (int i = 0; i < sequence.size(); i++) {
+            soundManager.playSound(sequence.get(i).toString());
+        }
     }
 
     /**
@@ -66,21 +79,42 @@ public class SimonGame {
         }
     }
 
-    private void handleSinglePlayerTurn() {
+    public void handleSinglePlayerTurn() {
         if (currentPlayer == null) {
             throw new IllegalStateException("Current player is not initialized!");
         }
+
         System.out.println("Single-player mode activated for: " + currentPlayer.getNom());
 
-        if (validateSequence(currentPlayer)) {
+        // Récupère la séquence complète du joueur
+        List<String> playerSequence = getPlayerSequence(currentPlayer);
+
+        // Vérifie si le joueur a terminé d'entrer sa séquence
+        if (playerSequence.size() < sequence.size()) {
+            System.out.println("Player's sequence is incomplete.");
+            return; // Attendre que le joueur finisse sa séquence
+        }
+
+        // Valide la séquence du joueur
+        if (validateFullSequence(playerSequence)) {
             score++;
             currentPlayer.setScore(score);
-            addRandomColor();
+
             System.out.println("Sequence complete! Score: " + score);
+            addRandomColor(); // Ajoute une nouvelle couleur à la séquence
         } else {
             System.out.println("Game Over! Final Score: " + score);
-            resetGame();
+            resetGame(); // Réinitialise le jeu
         }
+    }
+
+    private boolean validateFullSequence(List<String> playerSequence) {
+        for (int i = 0; i < sequence.size(); i++) {
+            if (!sequence.get(i).equals(playerSequence.get(i))) {
+                return false; // La séquence n'est pas correcte
+            }
+        }
+        return true; // La séquence est correcte
     }
 
     private void handleMultiplayerTurn() {
@@ -115,15 +149,19 @@ public class SimonGame {
      * @return true if the sequence is correct, false otherwise.
      */
     private boolean validateSequence(Joueur joueur) {
-        List<String> playerSequence = getPlayerSequence(joueur);
-        if (playerSequence.size() != sequence.size()) {
-            return false;
+        int currentLevel = joueur.getCurrentLevel(); // Récupère le niveau du joueur
+        if (currentLevel >= sequence.size()) {
+            throw new IndexOutOfBoundsException("The player's current level is out of bounds!");
         }
-        for (int i = 0; i < sequence.size(); i++) {
+        List<String> playerSequence = getPlayerSequence(joueur);
+        for (int i = 0; i <= currentLevel; i++) {
             if (!sequence.get(i).equals(playerSequence.get(i))) {
                 return false;
             }
         }
+
+        // Avance le joueur au niveau suivant si la séquence est correcte
+        joueur.setCurrentLevel(currentLevel + 1);
         return true;
     }
 
@@ -153,7 +191,11 @@ public class SimonGame {
     public void resetGame() {
         this.sequence.clear();
         this.score = 0;
-        this.currentLevel = 0;
+        if (multiplayer) {
+            joueurs.forEach(joueur -> joueur.setCurrentLevel(0));
+        } else if (currentPlayer != null) {
+            currentPlayer.setCurrentLevel(0);
+        }
         addRandomColor();
     }
 
@@ -163,104 +205,39 @@ public class SimonGame {
      * @param color The color provided by the player.
      * @return true if the color is correct, false otherwise.
      */
+    @FXML
     public boolean validateColor(String color) {
         if (sequence.isEmpty()) {
             throw new IllegalStateException("The sequence is empty!");
         }
 
-        // Check if the provided color matches the expected color in the sequence
-        boolean isValid = sequence.get(currentLevel).equals(color);
-
-        // Advance to the next level if the color is correct
-        if (isValid) {
-            currentLevel++;
-        } else {
-            System.out.println("Incorrect color! Game over.");
-            resetGame(); // Optionally reset the game or handle the end of the round
+        if (currentPlayer == null) {
+            throw new IllegalStateException("Current player is not set!");
         }
 
-        return isValid;
-    }
+        // Ajoute la couleur choisie à l'entrée du joueur
+        List<String> currentPlayerInput = List.of();
+        currentPlayerInput.add(color);
+        System.out.println("Player - Current Input: " + currentPlayerInput);
+        System.out.println("Sequence - Expected: " + sequence);
 
-    // Getters and setters
-
-    public int getScore() {
-        return score;
-    }
-
-    public void setScore(int score) {
-        this.score = score;
-    }
-
-    public List<String> getSequence() {
-        return sequence;
-    }
-
-    public void setSequence(List<String> sequence) {
-        this.sequence = sequence;
-    }
-
-    public Joueur getCurrentPlayer() {
-        return currentPlayer;
-    }
-
-    public void setCurrentPlayer(Joueur currentPlayer) {
-        this.currentPlayer = currentPlayer;
-    }
-
-    public int getMaxLevel() {
-        return maxLevel;
-    }
-
-    public void setMaxLevel(int maxLevel) {
-        this.maxLevel = maxLevel;
-    }
-
-    public int getCurrentLevel() {
-        return currentLevel;
-    }
-
-    public void setCurrentLevel(int currentLevel) {
-        this.currentLevel = currentLevel;
-    }
-
-    public Difficulty getDifficulty() {
-        return difficulty;
-    }
-
-    public void setDifficulty(Difficulty difficulty) {
-        this.difficulty = difficulty;
-    }
-
-    public List<Joueur> getJoueurs() {
-        return joueurs;
-    }
-
-    public void setJoueurs(List<Joueur> joueurs) {
-        this.joueurs = joueurs;
-    }
-
-    public boolean isMultiplayer() {
-        return multiplayer;
-    }
-
-    public void setMultiplayer(boolean multiplayer) {
-        this.multiplayer = multiplayer;
-    }
-
-    public int getCurrentPlayerIndex() {
-        return currentPlayerIndex;
-    }
-
-    public void setCurrentPlayerIndex(int currentPlayerIndex) {
-        this.currentPlayerIndex = currentPlayerIndex;
-    }
-
-    public Random getRandom() {
-        return random;
-    }
-
-    public void setRandom(Random random) {
-        this.random = random;
+        // Vérifie si le joueur a terminé d'entrer toute la séquence
+        if (currentPlayerInput.size() == sequence.size()) {
+            // Valide la séquence complète
+            if (validateFullSequence(currentPlayerInput)) {
+                System.out.println("Sequence complete! Score: " + score);
+                score++;
+                currentPlayer.setScore(score);
+                addRandomColor(); // Ajoute une nouvelle couleur
+            } else {
+                System.out.println("Incorrect sequence! Game over.");
+                resetGame(); // Réinitialise le jeu
+            }
+            currentPlayerInput.clear(); // Réinitialise l'entrée du joueur pour la prochaine séquence
+        } else {
+            // Attend que le joueur termine sa séquence
+            System.out.println("Waiting for the player to finish the sequence...");
+        }
+        return false;
     }
 }

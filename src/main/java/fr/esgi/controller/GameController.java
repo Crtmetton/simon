@@ -10,6 +10,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 import fr.esgi.business.SimonGame;
 
+import java.util.List;
+
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -48,6 +50,7 @@ public class GameController {
         // Gérer l'action pour le bouton rouge
         System.out.println("Red button clicked");
         soundManager.playSound("red");
+        simonGame.handleSinglePlayerTurn();
     }
 
     @FXML
@@ -56,6 +59,7 @@ public class GameController {
         // Gérer l'action pour le bouton vert
         System.out.println("Green button clicked");
         soundManager.playSound("green");
+        simonGame.handleSinglePlayerTurn();
     }
 
     @FXML
@@ -64,6 +68,7 @@ public class GameController {
         // Gérer l'action pour le bouton jaune
         System.out.println("Yellow button clicked");
         soundManager.playSound("yellow");
+        simonGame.handleSinglePlayerTurn();
     }
 
     @FXML
@@ -72,6 +77,7 @@ public class GameController {
         // Gérer l'action pour le bouton bleu
         System.out.println("Blue button clicked");
         soundManager.playSound("blue");
+        simonGame.handleSinglePlayerTurn();
     }
 
     @FXML
@@ -80,6 +86,25 @@ public class GameController {
         System.out.println("Opening configuration...");
     }
 
+
+    @FXML
+    public boolean verifyPlayerInput(String playerColor, List<String> sequence, int currentIndex) {
+        // Vérifie si la couleur saisie par le joueur correspond à celle de la séquence
+        if (sequence == null || currentIndex >= sequence.size()) {
+            System.out.println("Erreur : La séquence est invalide ou l'index est hors limites.");
+            return false;
+        }
+
+        boolean isCorrect = sequence.get(currentIndex).equalsIgnoreCase(playerColor);
+
+        if (isCorrect) {
+            System.out.println("Couleur correcte : " + playerColor);
+        } else {
+            System.out.println("Erreur : " + playerColor + " ne correspond pas à " + sequence.get(currentIndex));
+        }
+
+        return isCorrect;
+    }
 
     @FXML
     public void initialize() {

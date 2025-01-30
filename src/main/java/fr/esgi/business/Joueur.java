@@ -1,18 +1,23 @@
 package fr.esgi.business;
 
+import lombok.Data;
 import lombok.NonNull;
+
+import java.util.List;
 
 /**
  * Ceci est la declaration de la Classe Joueur avec les Prperties sont pour la creation et les datas des joueurs present dans la partie en cours
  */
-
+@Data
 public class Joueur {
         private long id;
         @NonNull
         private String nom;
         private String prenom;
         private int score;
+        private int currentLevel;
         private Classement classement;
+        private List<String> sequence;
         private long compteur = 0L;
 
         public Joueur(@NonNull String nom) {
@@ -59,6 +64,9 @@ public class Joueur {
                 this.id = id;
         }
 
+        public int getCurrentLevel() {
+                return this.currentLevel;
+        }
         public void setNom(@NonNull String nom) {
                 this.nom = nom;
         }
