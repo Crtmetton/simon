@@ -1,13 +1,11 @@
 package fr.esgi.services;
 
+import java.util.List;
+
 public interface GameService {
-
-
-    private void startGame(){
-
-    }
-
-    private void endGame(){
-
-    }
+    void startNewGame();
+    void addNextColor();
+    boolean validateUserInput(String color);
+    List<String> getSequence();
+    int getScore();
 }

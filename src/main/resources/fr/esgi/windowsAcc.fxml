@@ -1,16 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Button?>
-<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.geometry.Pos?>
+<?import javafx.scene.control.TextField?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.esgi.PrimaryController">
-   <children>
-      <Label text="Primary View" />
-      <Button fx:id="primaryButton" text="Switch to Secondary View" onAction="#switchToSecondary"/>
-   </children>
-   <padding>
-      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-   </padding>
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="fr.esgi.PrimaryController" alignment="CENTER" spacing="20">
+    <!-- Choix du mode de jeu -->
+    <HBox alignment="CENTER" spacing="10">
+        <Button text="Solo" onAction="#goToSoloChoice"/>
+        <Button text="Multijoueur" onAction="#goToMultiChoice"/>
+    </HBox>
+
+    <!-- Choix du nombre de joueurs (invisible par défaut) -->
+    <VBox fx:id="multiChoiceContainer" visible="false" alignment="CENTER" spacing="10">
+        <Button text="2 Joueurs" onAction="#goToMultiChoice2"/>
+        <Button text="4 Joueurs" onAction="#goToMultiChoice4"/>
+    </VBox>
+
+    <!-- Conteneur pour les champs des pseudos -->
+    <VBox fx:id="playerFieldsContainer" visible="false" alignment="CENTER" spacing="10"/>
+
+    <!-- Bouton de validation (invisible par défaut) -->
+    <Button fx:id="validateButton" text="Valider" onAction="#onValidate" visible="false" alignment="CENTER"/>
 </VBox>
